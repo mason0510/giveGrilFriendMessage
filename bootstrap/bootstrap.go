@@ -76,7 +76,7 @@ func getData() any {
 	return weather.Main.Temp - 273.15
 }
 func Run() {
-	wb, err := NewWeChatBot("zhxcmason")
+	wb, err := NewWeChatBot("似水流年")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -89,10 +89,8 @@ func (wb *WeChatBot) SendMessageToGirlFriend() {
 	for {
 		now := time.Now()
 		rand.Seed(time.Now().Unix())
-		//r := rand.Intn(30)+16
-		//t := time.Date(now.Year(), now.Month(), now.Day(), 9, r, 0, 0, now.Location())
-		//每五分钟发一次
-		t := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute()+2, 0, 0, now.Location())
+		r := rand.Intn(30)
+		t := time.Date(now.Year(), now.Month(), now.Day(), 9, r, 0, 0, now.Location())
 		timer := time.NewTimer(now.Sub(t))
 		<-timer.C
 		wb.gf.SendText(GetGreeting())
@@ -136,11 +134,15 @@ func NewWeChatBot(gfName string) (*WeChatBot, error) {
 	}
 	//打印所有的好友
 	for _, friend := range friends {
-		fmt.Println(friend.RemarkName)
+		fmt.Println(friend.UserName)
+		fmt.Println(friend.NickName)
+		fmt.Println(friend.DisplayName)
+		//打印结构体friend
+		fmt.Println(friend)
 	}
 
 	// Search for girlfriend by remark name
-	gf := friends.SearchByUserName(1, gfName)
+	gf := friends.SearchByNickName(1, gfName)
 
 	if gf.Count() == 0 {
 		return nil, fmt.Errorf("girlfriend not found")
