@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 // test
@@ -28,9 +29,11 @@ func TestRun(t *testing.T) {
 	//dataFetcher.Fetch()
 	//GetGreeting()
 	//rand.Seed(time.Now().Unix())
-	for i := 0; i < 10; i++ {
-		greeting := GetGreeting()
-		fmt.Println(greeting)
-	}
+	//for i := 0; i < 10; i++ {
+	//	greeting := GetGreeting()
+	//	fmt.Println(greeting)
+	//}
+	//查看当前的时区
+	fmt.Println(time.Now().Location())
 
 }
