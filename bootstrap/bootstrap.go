@@ -133,13 +133,13 @@ func NewWeChatBot(gfName string) (*WeChatBot, error) {
 		return nil, err
 	}
 	//打印所有的好友
-	for _, friend := range friends {
-		fmt.Println(friend.UserName)
-		fmt.Println(friend.NickName)
-		fmt.Println(friend.DisplayName)
-		//打印结构体friend
-		fmt.Println(friend)
-	}
+	//for _, friend := range friends {
+	//	fmt.Println(friend.UserName)
+	//	fmt.Println(friend.NickName)
+	//	fmt.Println(friend.DisplayName)
+	//	//打印结构体friend
+	//	fmt.Println(friend)
+	//}
 
 	// Search for girlfriend by remark name
 	gf := friends.SearchByNickName(1, gfName)
