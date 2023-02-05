@@ -112,6 +112,7 @@ func NewWeChatBot(gfName string) (*WeChatBot, error) {
 			msg.ReplyText("pong")
 		}
 	}
+	bot.MessageHandler = handlers.Handler
 
 	// Register login QR code callback
 	bot.UUIDCallback = handlers.QrCodeCallBack

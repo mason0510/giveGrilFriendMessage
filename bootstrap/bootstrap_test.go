@@ -38,5 +38,8 @@ func TestRun(t *testing.T) {
 	t.Log(time.Now())
 	t.Log(time.Now().Location())
 	fmt.Println(time.Now().Location())
-
+	//t.Log(time.Now().Location())
+	now := time.Now()
+	date := time.Date(now.Year(), now.Month(), now.Day(), 9, 1, 0, 0, now.Location())
+	t.Log(date)
 }

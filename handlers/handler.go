@@ -43,10 +43,10 @@ func QrCodeCallBack(uuid string) {
 func Handler(msg *openwechat.Message) {
 	msgContent := msg.Content
 	log.Printf("hadler Received msg : %v", msgContent)
-	handlers[UserHandler].handle(msg)
+	//handlers[UserHandler].handle(msg)
 	if msg.IsFriendAdd() {
 		if config.LoadConfig().AutoPass {
-			msg.Agree("你好,我是Alex，你可以向我提问任何问题。")
+			msg.Agree("你好,我是mason")
 		}
 	}
 }
