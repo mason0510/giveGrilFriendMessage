@@ -2,5 +2,6 @@
   "api_key": "",
   "auto_pass": false,
   "session_timeout": 180,
-  "is_save":true
+  "is_save":true,
+  "weather_api": "8c1a38623e2a01368b8e78508d96aef2"
 }

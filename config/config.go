@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -18,6 +19,8 @@ type Configuration struct {
 	SessionTimeout time.Duration `json:"session_timeout"`
 	//isSave
 	IsSave bool `json:"is_save"`
+	//weather_api
+	WetherApi string `json:"wether_api"`
 }
 
 var config *Configuration
@@ -30,7 +33,13 @@ func LoadConfig() *Configuration {
 		config = &Configuration{
 			SessionTimeout: 180,
 		}
-		f, err := os.Open("config.json")
+		//获取当前目录
+		dir, _ := os.Getwd()
+		fmt.Println(dir)
+		//dir = dir[:len(dir)-9]
+		////去掉dir中的config
+		fmt.Println(dir)
+		f, err := os.Open(dir + "/config.json")
 		if err != nil {
 			log.Fatalf("open config err: %v", err)
 			return

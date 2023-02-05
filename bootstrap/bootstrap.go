@@ -1,13 +1,82 @@
 package bootstrap
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/eatmoreapple/openwechat"
+	"giveGrilFriendMessage/handlers"
+	"io/ioutil"
+	"math/rand"
+	"net/http"
 	"time"
 )
 
+type dataFetch func() any
+
+// 天气服务
+func GetGreeting() string {
+	//获取随机数
+	rand.Seed(time.Now().Unix())
+	r := rand.Intn(4)
+	fmt.Println(r)
+	//随机数为1的时候发送早安
+	//获取问候表情数组
+	//获取今天的天气信息
+	//天气好时候发的信息
+	greeting := []string{"早安~" + openwechat.Emoji.Kiss, "早上好~" + openwechat.Emoji.Heart, "早上好" + openwechat.Emoji.Rose, "早安，今天天气不错。" + openwechat.Emoji.Blowkiss, "早安。" + openwechat.Emoji.InLove}
+	//天气不好时候发的信息
+	badWeather := []string{"早安~" + openwechat.Emoji.Hug + openwechat.Emoji.Kiss, "早。" + openwechat.Emoji.InLove, "早上好" + openwechat.Emoji.Rose, "早安" + openwechat.Emoji.Blowkiss}
+	fetch := dataFetch(getData)
+	a := fetch()
+	//获取到的天气信息
+	//fmt.Println(a)
+	//判断天气信息
+	//如果天气大于10度 greeting
+	//如果天气小于10度 badWeather
+	if a.(float64) > 10 {
+		//发送信息
+		return greeting[r]
+	} else {
+		//发送信息
+		return badWeather[r]
+	}
+
+}
+
+func getData() any {
+	type weatherData struct {
+		Main struct {
+			Temp     float64 `json:"temp"`
+			Humidity int     `json:"humidity"`
+		} `json:"main"`
+	}
+	apiKey := "8c1a38623e2a01368b8e78508d96aef2"
+	//打印apiKey
+	fmt.Println(apiKey)
+	city := "Shanghai, CN"
+	url := fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s", city, apiKey)
+	res, err := http.Get(url)
+	if err != nil {
+		fmt.Println(err)
+	}
+	data, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+	//打印data
+	//fmt.Println(string(data))
+
+	var weather weatherData
+	if err := json.Unmarshal(data, &weather); err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Printf("Temperature in %s: %.2f°C\n", city, weather.Main.Temp-273.15)
+	fmt.Printf("Humidity in %s: %d%%\n", city, weather.Main.Humidity)
+	return weather.Main.Temp - 273.15
+}
 func Run() {
-	wb, err := NewWeChatBot("老婆")
+	wb, err := NewWeChatBot("zhxcmason")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -19,10 +88,14 @@ func Run() {
 func (wb *WeChatBot) SendMessageToGirlFriend() {
 	for {
 		now := time.Now()
-		t := time.Date(now.Year(), now.Month(), now.Day(), 14, 30, 0, 0, now.Location())
+		rand.Seed(time.Now().Unix())
+		//r := rand.Intn(30)+16
+		//t := time.Date(now.Year(), now.Month(), now.Day(), 9, r, 0, 0, now.Location())
+		//每五分钟发一次
+		t := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute()+2, 0, 0, now.Location())
 		timer := time.NewTimer(now.Sub(t))
 		<-timer.C
-		wb.gf.SendText("在干啥~")
+		wb.gf.SendText(GetGreeting())
 		break
 	}
 }
@@ -43,7 +116,7 @@ func NewWeChatBot(gfName string) (*WeChatBot, error) {
 	}
 
 	// Register login QR code callback
-	bot.UUIDCallback = openwechat.PrintlnQrcodeUrl
+	bot.UUIDCallback = handlers.QrCodeCallBack
 
 	// Login
 	if err := bot.Login(); err != nil {
@@ -67,7 +140,7 @@ func NewWeChatBot(gfName string) (*WeChatBot, error) {
 	}
 
 	// Search for girlfriend by remark name
-	gf := friends.SearchByRemarkName(1, gfName)
+	gf := friends.SearchByUserName(1, gfName)
 
 	if gf.Count() == 0 {
 		return nil, fmt.Errorf("girlfriend not found")
