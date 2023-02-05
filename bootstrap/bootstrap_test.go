@@ -35,6 +35,8 @@ func TestRun(t *testing.T) {
 	//}
 	//查看当前的时区
 	fmt.Println(time.Now())
+	t.Log(time.Now())
+	t.Log(time.Now().Location())
 	fmt.Println(time.Now().Location())
 
 }
